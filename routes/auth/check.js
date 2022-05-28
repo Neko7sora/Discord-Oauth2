@@ -17,11 +17,17 @@ async function routes(fastify, options) {
           request.session.kamepakenchi = "false";
           //console.log("false");
         }
-        reply.redirect("/");
+        reply.redirect("/auth/check-wait");
       } catch (e) {}
     } else {
       reply.redirect("/");
     }
+  });
+  fastify.get("/auth/check-wait", (req, reply) => {
+    reply.view("/view/pages.ejs", {
+      pagetitle: "Checking..., please wait… | Zero Trust Application Access",
+      pages: "auth/check-wait",
+    });
   });
 }
 

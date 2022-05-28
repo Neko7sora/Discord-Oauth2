@@ -22,6 +22,7 @@ fastify.register(fastifySession, {
 });
 const { proxy, close } = require("fast-proxy")({
   base: process.env.PROXY,
+  cacheURLs: 0,
 });
 
 // fastify.get("/check", async function (request, reply) {

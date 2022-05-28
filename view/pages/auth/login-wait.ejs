@@ -1,4 +1,9 @@
 <main class="container">
-<a href="#" aria-busy="true">Signing in, please wait…</a>
+  <a href="#" aria-busy="true">Signing in, please wait…</a>
 </main>
-<script>setTimeout(location.href="/auth/check",10000);</script>
+<script>
+  setTimeout(
+    (location.href = "/auth/check?nocache=" + new Date().getTime()),
+    10000
+  );
+</script>

@@ -6,7 +6,7 @@ async function routes(fastify, options) {
           reply.status(500);
           reply.send("Internal Server Error");
         } else {
-          reply.redirect("/logout-wait");
+          reply.redirect("/auth/logout-wait");
         }
       });
       request.session.auth = false;
