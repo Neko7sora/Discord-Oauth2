@@ -1,0 +1,21 @@
+<div class="container">
+  <% if (discorduser) { %> ログイン済み
+  <h3>ユーザー名#****</h3>
+  <%- discorduser.tag %>
+  <h3>ユーザー名</h3>
+  <%- discorduser.username %>
+  <h3>#****</h3>
+  #<%- discorduser.dis %>
+  <h3>ユーザーID</h3>
+  <%- discorduser.id %>
+  <h3>2段階認証 (true or false)</h3>
+  <%- discorduser.mfa %>
+  <h3>ユーザー言語 (langcode)</h3>
+  <%- discorduser.locale %>
+  <h3>サーバー (json)</h3>
+  <pre style="border: 1px solid #000; padding: 15px; white-space: pre-wrap">
+<%- JSON.stringify(discorduser, null, 2) %>
+</pre
+  >
+  <% } else { %> ログインしていない <% } %>
+</div>

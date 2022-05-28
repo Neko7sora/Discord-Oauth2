@@ -1,0 +1,8 @@
+<!DOCTYPE html><html lang="ja">
+  <title><%- pagetitle %></title>
+  <style type="text/css"><%- include('css/picocss.ejs') %><%- include('css/init.ejs') %></style>
+  <body>
+<%- include('pages/'+ pages +'.ejs').replace(/(\s+)</g, "<").replace(/(\s+)>/g, ">") %>
+
+</body>
+</html>
