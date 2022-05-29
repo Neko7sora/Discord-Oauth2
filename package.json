@@ -2,14 +2,13 @@
   "name": "fastify-discord-oauth2",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Neko7sora",
   "dependencies": {
     "@fastify/helmet": "^8.1.0",
     "@fastify/oauth2": "^5.0.0",
