@@ -1,8 +1,27 @@
 require("dotenv").config();
 // Require the framework and instantiate it
-const fastify = require("fastify")({ logger: true });
+const split = require("split2");
+const fs = require("fs");
+const now = Date.now();
+const stream = split(JSON.parse)
+  .on("data", function (obj) {
+    //each chunk now is a js object
+    fs.appendFileSync("./logs/" + now + ".log", JSON.stringify(obj) + "\n");
+  })
+  .on("error", function (error) {
+    //handling parsing errors
+    console.log(error);
+    fs.appendFileSync("./logs/" + now + "-error.log", JSON.stringify(error) + "\n");
+  });
+
+const fastify = require("fastify")({
+  logger: {
+    level: "info",
+    stream: stream,
+  },
+});
 const fastifySession = require("@fastify/session");
-const fastifyCookie = require("fastify-cookie");
+const fastifyCookie = require("@fastify/cookie");
 const crypto = require("crypto");
 fastify.register(require("point-of-view"), {
   engine: {
@@ -67,7 +86,7 @@ fastify.register(require("./routes/auth/check"));
 fastify.get("/*", (request, reply) => {
   if (request.session.auth == "true") {
     if (request.session.kamepakenchi == "true") {
-      proxy(request, reply.res, request.url, {});
+      proxy(request, reply.raw, request.url, {});
     } else {
       reply.view("/view/pages.ejs", {
         pagetitle: "Error | Zero Trust Application Access",
@@ -83,6 +102,8 @@ fastify.get("/*", (request, reply) => {
 const start = async () => {
   try {
     await fastify.listen(process.env.PORT);
+    console.log("listening on port", process.env.PORT);
+    console.log("log", now);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

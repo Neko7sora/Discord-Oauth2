@@ -8,7 +8,13 @@ pnpm i
 
 ## 2. example.env を見て、.env 作成
 
-## 3. Discord OAuth2 起動
+## 3. 動作を早くするためにビルドを実行
+
+```
+pnpm build
+```
+
+## 4. Discord OAuth2 起動
 
 ```
 pnpm start

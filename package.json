@@ -5,21 +5,25 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app-build.js",
+    "build": "esbuild app.js --bundle --outfile=./app-build.js --target=node16.15  --platform=node",
+    "serve": "pnpm build"
   },
   "keywords": [],
   "author": "Neko7sora",
   "dependencies": {
+    "@fastify/cookie": "6.0.0",
     "@fastify/helmet": "^8.1.0",
     "@fastify/oauth2": "^5.0.0",
     "@fastify/reply-from": "^7.0.1",
     "@fastify/session": "^8.2.0",
     "dotenv": "^16.0.1",
     "ejs": "^3.1.8",
+    "esbuild": "^0.14.42",
     "fast-proxy": "^2.1.0",
     "fastify": "^3.29.0",
-    "fastify-cookie": "^5.7.0",
     "node-fetch": "^2.6.7",
-    "point-of-view": "^5.3.0"
+    "point-of-view": "^5.3.0",
+    "split2": "^4.1.0"
   }
 }
