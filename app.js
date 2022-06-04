@@ -22,7 +22,6 @@ const fastify = require("fastify")({
 });
 const fastifySession = require("@fastify/session");
 const fastifyCookie = require("@fastify/cookie");
-const crypto = require("crypto");
 fastify.register(require("point-of-view"), {
   engine: {
     ejs: require("ejs"),
@@ -33,9 +32,10 @@ fastify.register(require("@fastify/helmet"), {
   contentSecurityPolicy: false,
 });
 fastify.register(fastifyCookie);
+const crypto = require('crypto').randomBytes(256).toString('hex')
 fastify.register(fastifySession, {
   cookieName: "sessionId",
-  secret: process.env.COOKIE_BLOCK_CHAIN,
+  secret: crypto,
   cookie: { secure: process.env.COOKIE_SECURE }, //http only(localhost etc...)
   expires: 1800000,
 });
@@ -103,6 +103,7 @@ const start = async () => {
   try {
     await fastify.listen(process.env.PORT);
     console.log("listening on port", process.env.PORT);
+    fastify.log.info("!cookie-secret: " + crypto);
     console.log("log", now);
   } catch (err) {
     fastify.log.error(err);

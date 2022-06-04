@@ -6,15 +6,15 @@ async function routes(fastify, options) {
     scope: ["identify", "guilds"],
     credentials: {
       client: {
-        id: process.env.CLIENT_ID,
-        secret: process.env.CLIENT_SECRET,
+        id: process.env.DISCORD_CLIENT_ID,
+        secret: process.env.DISCORD_CLIENT_SECRET,
       },
       auth: oauthPlugin.DISCORD_CONFIGURATION,
     },
     // register a fastify url to start the redirect flow
     startRedirectPath: "/auth/discord",
     // facebook redirect here after the user login
-    callbackUri: process.env.DOMAIN + "/auth/discord/callback",
+    callbackUri: process.env.OAUTH2_CALLBACK + "/auth/discord/callback",
   });
 
   fastify.get("/auth/discord/callback", async function (request, reply) {
