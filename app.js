@@ -11,7 +11,10 @@ const stream = split(JSON.parse)
   .on("error", function (error) {
     //handling parsing errors
     console.log(error);
-    fs.appendFileSync("./logs/" + now + "-error.log", JSON.stringify(error) + "\n");
+    fs.appendFileSync(
+      "./logs/" + now + "-error.log",
+      JSON.stringify(error) + "\n"
+    );
   });
 
 const fastify = require("fastify")({
@@ -32,11 +35,11 @@ fastify.register(require("@fastify/helmet"), {
   contentSecurityPolicy: false,
 });
 fastify.register(fastifyCookie);
-const crypto = require('crypto').randomBytes(256).toString('hex')
+const crypto = require("crypto").randomBytes(256).toString("hex");
 fastify.register(fastifySession, {
   cookieName: "sessionId",
   secret: crypto,
-  cookie: { secure: process.env.COOKIE_SECURE }, //http only(localhost etc...)
+  cookie: { secure: process.env.COOKIE_SECURE },
   expires: 1800000,
 });
 const { proxy, close } = require("fast-proxy")({
@@ -44,15 +47,12 @@ const { proxy, close } = require("fast-proxy")({
   cacheURLs: 0,
 });
 
-// fastify.get("/check", async function (request, reply) {
-// reply.send({ token: request.session });
-// });
 fastify.get("/auth", (request, reply) => {
   if (request.session.auth == "true") {
-    if (request.session.kamepakenchi == "true") {
+    if (request.session.discord_guild_join == "true") {
       reply.view("/view/pages.ejs", {
         pagetitle: "Index | Zero Trust Application Access",
-        pages: "syspro/index",
+        pages: "auth/index",
       });
     } else {
       reply.view("/view/pages.ejs", {
@@ -71,10 +71,10 @@ fastify.get("/auth", (request, reply) => {
 fastify.get("/robots.txt", (request, reply) => {
   reply.view("/view/robots.ejs", {});
 });
-fastify.get("/auth/check2", (request, reply) => {
+fastify.get("/auth/info", (request, reply) => {
   reply.view("/view/pages.ejs", {
-    pagetitle: "check | Zero Trust Application Access",
-    pages: "auth/check",
+    pagetitle: "Info | Zero Trust Application Access",
+    pages: "auth/info",
     discorduser: request.session.discorduser,
   });
 });
@@ -85,7 +85,7 @@ fastify.register(require("./routes/auth/check"));
 
 fastify.get("/*", (request, reply) => {
   if (request.session.auth == "true") {
-    if (request.session.kamepakenchi == "true") {
+    if (request.session.discord_guild_join == "true") {
       proxy(request, reply.raw, request.url, {});
     } else {
       reply.view("/view/pages.ejs", {

@@ -56,7 +56,7 @@ async function routes(fastify, options) {
             });
         });
     } else{
-      reply.redirect("/");
+      reply.redirect("/auth");
     }
   });
   fastify.get("/auth/login-wait", (req, reply) => {

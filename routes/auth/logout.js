@@ -11,7 +11,7 @@ async function routes(fastify, options) {
       });
       request.session.auth = false;
     } else {
-      reply.redirect("/");
+      reply.redirect("/auth");
     }
   });
   fastify.get("/auth/logout-wait", (req, reply) => {

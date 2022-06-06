@@ -1,26 +1,21 @@
 async function routes(fastify, options) {
   fastify.get("/auth/check", async function (request, reply) {
     if (request.session.auth == "true") {
-      request.session.kamepakenchi = "false";
+      request.session.discord_guild_join = "false";
       try {
         if (request.session.discorduser) {
           request.session.discorduser.guilds.filter(function (item, index) {
-            if (item.id == "930083398691733565") {
-              request.session.kamepakenchi = "true";
-              //console.log("true");
-            } else {
-              //console.log("false");
+            if (item.id == process.env.DISCORD_GUILD_ID) {
+              request.session.discord_guild_join = "true";
             }
           });
-          //console.log("true");
         } else {
-          request.session.kamepakenchi = "false";
-          //console.log("false");
+          request.session.discord_guild_join = "false";
         }
         reply.redirect("/auth/check-wait");
       } catch (e) {}
     } else {
-      reply.redirect("/");
+      reply.redirect("/auth");
     }
   });
   fastify.get("/auth/check-wait", (req, reply) => {
