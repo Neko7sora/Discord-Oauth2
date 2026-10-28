@@ -1,6 +1,5 @@
 async function routes(fastify, options) {
   const oauthPlugin = require("@fastify/oauth2");
-  const fetch = require("node-fetch");
   fastify.register(oauthPlugin, {
     name: "discordOAuth2",
     scope: ["identify", "guilds"],
@@ -18,45 +17,42 @@ async function routes(fastify, options) {
   });
 
   fastify.get("/auth/discord/callback", async function (request, reply) {
-    let token =
-      await this.discordOAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
+    const { token } =
+      await this.discordOAuth2.getAccessTokenFromAuthorizationCodeFlow(request, reply);
     if (token.token_type && token.access_token) {
-      request.session.discordcallback = token;
-      request.session.auth = "true";
-      fetch("https://discord.com/api/users/@me", {
+      const userResult = await fetch("https://discord.com/api/users/@me", {
         method: "GET",
         headers: {
           authorization: `${token.token_type} ${token.access_token}`,
         },
-      })
-        .then((res2) => (request.session.res2 = res2.json()))
-        .then((userResponse) => {
-          userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
-          userResponse.username = userResponse.username;
-          userResponse.dis = userResponse.discriminator;
-          userResponse.id = userResponse.id;
-          userResponse.mfa = userResponse.mfa_enabled;
-          userResponse.locale = userResponse.locale;
-          userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
-          userResponse.avatarURL = userResponse.avatar
-            ? `https://cdn.discordappcom/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024`
-            : null;
-          request.session.discorduser = userResponse;
+      });
+      if (!userResult.ok) {
+        throw new Error("Failed to fetch Discord user");
+      }
+      const userResponse = await userResult.json();
+      userResponse.tag = `${userResponse.username}#${userResponse.discriminator}`;
+      userResponse.dis = userResponse.discriminator;
+      userResponse.mfa = userResponse.mfa_enabled;
+      userResponse.avatarURL = userResponse.avatar
+        ? `https://cdn.discordapp.com/avatars/${userResponse.id}/${userResponse.avatar}.png?size=1024`
+        : null;
 
-          fetch("https://discord.com/api/users/@me/guilds", {
-            method: "GET",
-            headers: {
-              authorization: `${token.token_type} ${token.access_token}`,
-            },
-          })
-            .then((res2) => res2.json())
-            .then((guildsResponse) => {
-              request.session.discorduser.guilds = guildsResponse;
-              reply.redirect("/auth/login-wait");
-            });
-        });
-    } else{
-      reply.redirect("/auth");
+      const guildsResult = await fetch("https://discord.com/api/users/@me/guilds", {
+        method: "GET",
+        headers: {
+          authorization: `${token.token_type} ${token.access_token}`,
+        },
+      });
+      if (!guildsResult.ok) {
+        throw new Error("Failed to fetch Discord guilds");
+      }
+      userResponse.guilds = await guildsResult.json();
+      request.session.discordcallback = token;
+      request.session.discorduser = userResponse;
+      request.session.auth = "true";
+      return reply.redirect("/auth/login-wait");
+    } else {
+      return reply.redirect("/auth");
     }
   });
   fastify.get("/auth/login-wait", (req, reply) => {

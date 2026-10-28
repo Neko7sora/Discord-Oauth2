@@ -25,7 +25,7 @@ const fastify = require("fastify")({
 });
 const fastifySession = require("@fastify/session");
 const fastifyCookie = require("@fastify/cookie");
-fastify.register(require("point-of-view"), {
+fastify.register(require("@fastify/view"), {
   engine: {
     ejs: require("ejs"),
   },
@@ -39,12 +39,14 @@ const crypto = require("crypto").randomBytes(256).toString("hex");
 fastify.register(fastifySession, {
   cookieName: "sessionId",
   secret: crypto,
-  cookie: { secure: process.env.COOKIE_SECURE },
-  expires: 1800000,
+  cookie: {
+    secure: process.env.COOKIE_SECURE === "true",
+    maxAge: 1800000,
+  },
 });
-const { proxy, close } = require("fast-proxy")({
+fastify.register(require("@fastify/reply-from"), {
   base: process.env.PROXY,
-  cacheURLs: 0,
+  disableCache: true,
 });
 
 fastify.get("/auth", (request, reply) => {
@@ -86,7 +88,7 @@ fastify.register(require("./routes/auth/check"));
 fastify.get("/*", (request, reply) => {
   if (request.session.auth == "true") {
     if (request.session.discord_guild_join == "true") {
-      proxy(request, reply.raw, request.url, {});
+      reply.from(request.url);
     } else {
       reply.view("/view/pages.ejs", {
         pagetitle: "Error | Zero Trust Application Access",
@@ -101,7 +103,7 @@ fastify.get("/*", (request, reply) => {
 // Run the server!
 const start = async () => {
   try {
-    await fastify.listen(process.env.PORT);
+    await fastify.listen({ port: Number(process.env.PORT) });
     console.log("listening on port", process.env.PORT);
     fastify.log.info("!cookie-secret: " + crypto);
     console.log("log", now);
@@ -110,4 +112,8 @@ const start = async () => {
     process.exit(1);
   }
 };
-start();
+if (require.main === module) {
+  start();
+}
+
+module.exports = fastify;

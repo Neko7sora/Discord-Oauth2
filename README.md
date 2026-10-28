@@ -1,9 +1,11 @@
 # fastify-discord-oauth2
 
+Node.js 22 以上と npm 10 以上が必要です。
+
 ## 1. 必要な依存関係インストール
 
 ```
-pnpm i
+npm ci
 ```
 
 ## 2. example.env を見て、.env 作成
@@ -11,13 +13,21 @@ pnpm i
 ## 3. 動作を早くするためにビルドを実行
 
 ```
-pnpm build
+npm run build
 ```
 
 ## 4. Discord OAuth2 起動
 
 ```
-pnpm start
+npm start
+```
+
+ビルド後も実行時の依存関係が必要です。デプロイ先では `npm ci --omit=dev` でインストールしてください。
+
+## テスト
+
+```
+npm test
 ```
 
 ## ライセンス

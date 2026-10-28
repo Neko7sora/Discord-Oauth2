@@ -4,26 +4,30 @@
   "description": "",
   "main": "app-build.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test",
     "start": "node app-build.js",
-    "build": "esbuild app.js --bundle --outfile=./app-build.js --target=node16.15  --platform=node",
-    "serve": "pnpm build"
+    "build": "esbuild app.js --bundle --packages=external --outfile=./app-build.js --target=node22 --platform=node",
+    "serve": "npm run build"
   },
   "keywords": [],
   "author": "Neko7sora",
   "dependencies": {
-    "@fastify/cookie": "6.0.0",
-    "@fastify/helmet": "^8.1.0",
-    "@fastify/oauth2": "^5.0.0",
-    "@fastify/reply-from": "^7.0.1",
-    "@fastify/session": "^8.2.0",
-    "dotenv": "^16.0.1",
-    "ejs": "^3.1.8",
-    "esbuild": "^0.14.42",
-    "fast-proxy": "^2.1.0",
-    "fastify": "^3.29.0",
-    "node-fetch": "^2.6.7",
-    "point-of-view": "^5.3.0",
-    "split2": "^4.1.0"
+    "@fastify/cookie": "^11.1.5",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/oauth2": "^8.3.2",
+    "@fastify/reply-from": "^12.8.0",
+    "@fastify/session": "^11.1.6",
+    "@fastify/view": "^12.0.1",
+    "dotenv": "^18.0.9",
+    "ejs": "^7.0.2",
+    "fastify": "^5.12.7",
+    "split2": "^4.2.0"
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }
